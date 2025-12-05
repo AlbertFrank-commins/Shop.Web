@@ -1,0 +1,86 @@
+﻿@using Shop.Contracts.Catalog
+@using Shop.Web.ViewModels.Catalog
+@model CatalogIndexViewModel
+
+@{
+    ViewData["Title"] = "Catálogo de productos";
+    var searchValue = Model.Search ?? string.Empty;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="get" asp-action="Index" asp-controller="Catalog" class="mb-3">
+    <input type="text"
+           name="search"
+           value="@searchValue"
+           placeholder="Buscar..." />
+    <button type="submit">Buscar</button>
+</form>
+
+<div class="row">
+    @foreach (var product in Model.Products)
+    {
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(product.Thumbnail))
+                {
+                    <img class="card-img-top" src="@product.Thumbnail" alt="@product.Title" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@product.Title</h5>
+                    <p class="card-text">
+                        @product.Price.ToString("C")
+                    </p>
+                    <a asp-action="Details"
+                       asp-route-id="@product.Id"
+                       class="btn btn-primary">
+                        Ver detalles
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Paginación de productos">
+        <ul class="pagination mt-3">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-search="@Model.Search">
+                        Anterior
+                    </a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-search="@Model.Search">
+                        @i
+                    </a>
+                </li>
+            }
+
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-search="@Model.Search">
+                        Siguiente
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

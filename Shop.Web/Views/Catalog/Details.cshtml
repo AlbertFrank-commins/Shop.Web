@@ -1,0 +1,38 @@
+﻿@using Shop.Contracts.Catalog
+@model ProductDto
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+
+<div class="row">
+    <div class="col-md-5">
+        @if (!string.IsNullOrEmpty(Model.Thumbnail))
+        {
+            <img src="@Model.Thumbnail" alt="@Model.Title" class="img-fluid" />
+        }
+    </div>
+    <div class="col-md-7">
+        <h3>@Model.Price.ToString("C")</h3>
+        <p>@Model.Description</p>
+
+        <p>
+            <strong>Categoría:</strong> @Model.Category <br />
+            <strong>Marca:</strong> @Model.Brand <br />
+            <strong>Rating:</strong> @Model.Rating
+        </p>
+
+        <form asp-controller="Cart" asp-action="Add" method="post" class="mb-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <div class="input-group" style="max-width: 200px;">
+                <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                <button type="submit" class="btn btn-success">Agregar al carrito</button>
+            </div>
+        </form>
+
+        <a asp-action="Index" class="btn btn-secondary">Volver al catálogo</a>
+    </div>
+</div>

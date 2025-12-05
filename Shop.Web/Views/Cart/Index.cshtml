@@ -1,0 +1,57 @@
+﻿@using Shop.Web.ViewModels.Cart
+@model CartIndexViewModel
+
+@{
+    ViewData["Title"] = "Carrito";
+}
+
+<h1>Carrito</h1>
+
+@if (!Model.Items.Any())
+{
+    <p>No hay productos en el carrito.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ProductTitle</td>
+                    <td>@item.UnitPrice.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.UnitPrice* item.Quantity).ToString("C")</td>
+                    <td>
+                        <form asp-action="Remove" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total: @Model.Total.ToString("C")</h3>
+
+    <form asp-action="Clear" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-warning">Vaciar carrito</button>
+    </form>
+
+    <form asp-controller="Orders" asp-action="Checkout" method="post" class="d-inline ms-2">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-success">Confirmar pedido</button>
+    </form>
+}

@@ -1,0 +1,41 @@
+﻿@using Shop.Web.ViewModels.Orders
+@model OrdersListViewModel
+
+@{
+    ViewData["Title"] = "Mis órdenes";
+}
+
+<h1>Mis órdenes</h1>
+
+@if (!Model.Orders.Any())
+{
+    <p>Todavía no tienes órdenes.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.CreatedAt.ToLocalTime()</td>
+                    <td>@order.Status</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-primary">
+                            Ver detalles
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

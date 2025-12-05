@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Shop.Web</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- Google Font similar a Amazon -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* HEADER estilo Amazon */
+        .amazon-header {
+            background-color: #131921;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        .amazon-header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .amazon-search {
+            display: flex;
+            width: 50%;
+        }
+
+        .amazon-search input {
+            border-radius: 4px 0 0 4px;
+            border: none;
+            padding: 8px;
+            width: 100%;
+        }
+
+        .amazon-search button {
+            background-color: #febd69;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .navbar-links a {
+            margin-left: 15px;
+            font-size: 14px;
+        }
+
+        .banner-section {
+            margin-top: 20px;
+        }
+
+        footer {
+            background-color: #232f3e;
+            color: white;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 🔹 HEADER ESTILO AMAZON -->
+    <header class="amazon-header d-flex align-items-center justify-content-between">
+        <div>
+            <a asp-controller="Home" asp-action="Index" class="h4">Shop.Web</a>
+        </div>
+
+        <!-- Barra de búsqueda -->
+        <form asp-controller="Catalog" asp-action="Index" method="get" class="amazon-search">
+            <input type="text" name="search" placeholder="Buscar productos..." />
+            <button type="submit">🔍</button>
+        </form>
+
+        <!-- Links del usuario -->
+        <div class="navbar-links d-flex align-items-center">
+            <a asp-controller="Catalog" asp-action="Index">Catálogo</a>
+            <a asp-controller="Cart" asp-action="Index">Carrito 🛒</a>
+            <a asp-controller="Orders" asp-action="Index">Órdenes</a>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Auth" asp-action="Logout">Salir</a>
+            }
+            else
+            {
+                <a asp-controller="Auth" asp-action="Login">Login</a>
+            }
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container mt-4">
+        @RenderBody()
+    </main>
+
+    <footer class="text-center">
+        © 2025 - Shop.Web
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
