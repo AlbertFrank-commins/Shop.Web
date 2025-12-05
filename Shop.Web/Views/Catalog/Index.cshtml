@@ -4,43 +4,49 @@
 
 @{
     ViewData["Title"] = "Catálogo de productos";
-    var searchValue = Model.Search ?? string.Empty;
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form method="get" asp-action="Index" asp-controller="Catalog" class="mb-3">
-    <input type="text"
-           name="search"
-           value="@searchValue"
-           placeholder="Buscar..." />
-    <button type="submit">Buscar</button>
-</form>
+@if (!Model.Products.Any())
+{
+    <p>No se encontraron productos.</p>
+}
+else
+{
+    <div class="row mt-4">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(product.Thumbnail))
+                    {
+                        <img class="card-img-top"
+                             src="@product.Thumbnail"
+                             alt="@product.Title"
+                             style="height:200px; object-fit:cover;" />
+                    }
 
-<div class="row">
-    @foreach (var product in Model.Products)
-    {
-        <div class="col-md-3 mb-3">
-            <div class="card h-100">
-                @if (!string.IsNullOrEmpty(product.Thumbnail))
-                {
-                    <img class="card-img-top" src="@product.Thumbnail" alt="@product.Title" />
-                }
-                <div class="card-body">
-                    <h5 class="card-title">@product.Title</h5>
-                    <p class="card-text">
-                        @product.Price.ToString("C")
-                    </p>
-                    <a asp-action="Details"
-                       asp-route-id="@product.Id"
-                       class="btn btn-primary">
-                        Ver detalles
-                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" style="min-height: 3rem;">
+                            @product.Title
+                        </h5>
+
+                        <p class="card-text fw-bold mb-2">
+                            @product.Price.ToString("C")
+                        </p>
+
+                        <a asp-action="Details"
+                           asp-route-id="@product.Id"
+                           class="btn btn-primary mt-auto">
+                            Ver detalles
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
 
 @if (Model.TotalPages > 1)
 {

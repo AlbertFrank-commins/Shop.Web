@@ -23,10 +23,22 @@ public class CartController : Controller
     {
         var cart = await _cartClient.GetCurrentCartAsync(DemoUserId);
 
+        var thumbnails = new Dictionary<int, string?>();
+
+        foreach (var item in cart.Items)
+        {
+            var product = await _catalogClient.GetProductByIdAsync(item.ProductId);
+            if (product != null)
+            {
+                thumbnails[item.ProductId] = product.Thumbnail;
+            }
+        }
+
         var vm = new CartIndexViewModel
         {
             Items = cart.Items.ToList(),
-            Total = cart.Total
+            Total = cart.Total,
+            ProductThumbnails = thumbnails
         };
 
         return View(vm);

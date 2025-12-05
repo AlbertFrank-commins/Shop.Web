@@ -13,9 +13,10 @@
 }
 else
 {
-    <table class="table">
+    <table class="table align-middle">
         <thead>
             <tr>
+                <th style="width:80px;"></th>
                 <th>Producto</th>
                 <th>Precio unitario</th>
                 <th>Cantidad</th>
@@ -26,11 +27,21 @@ else
         <tbody>
             @foreach (var item in Model.Items)
             {
+                Model.ProductThumbnails.TryGetValue(item.ProductId, out var thumbUrl);
+
                 <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(thumbUrl))
+                        {
+                            <img src="@thumbUrl"
+                                 alt="@item.ProductTitle"
+                                 style="width:60px; height:60px; object-fit:cover;" />
+                        }
+                    </td>
                     <td>@item.ProductTitle</td>
                     <td>@item.UnitPrice.ToString("C")</td>
                     <td>@item.Quantity</td>
-                    <td>@(item.UnitPrice* item.Quantity).ToString("C")</td>
+                    <td>@((item.UnitPrice * item.Quantity).ToString("C"))</td>
                     <td>
                         <form asp-action="Remove" method="post" class="d-inline">
                             @Html.AntiForgeryToken()
@@ -45,7 +56,7 @@ else
 
     <h3>Total: @Model.Total.ToString("C")</h3>
 
-    <form asp-action="Clear" method="post">
+    <form asp-action="Clear" method="post" class="d-inline">
         @Html.AntiForgeryToken()
         <button type="submit" class="btn btn-warning">Vaciar carrito</button>
     </form>

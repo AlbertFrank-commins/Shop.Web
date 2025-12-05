@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop.Contracts.Orders;
 using Shop.Web.ViewModels.Orders;
+using Shop.Contracts.Catalog;
 
 namespace Shop.Web.Controllers;
 
 public class OrdersController : Controller
 {
     private readonly IOrdersClient _ordersClient;
-
+    private readonly ICatalogClient _catalogClient;
     private static readonly Guid DemoUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-    public OrdersController(IOrdersClient ordersClient)
+    public OrdersController(IOrdersClient ordersClient, ICatalogClient catalogClient)
     {
         _ordersClient = ordersClient;
+        _catalogClient = catalogClient; // Ahora sí existe
     }
+
 
     // GET: /Orders
     public async Task<IActionResult> Index()
@@ -39,13 +42,26 @@ public class OrdersController : Controller
             return NotFound();
         }
 
+        var thumbnails = new Dictionary<int, string?>();
+
+        foreach (var item in order.Items)
+        {
+            var product = await _catalogClient.GetProductByIdAsync(item.ProductId);
+            if (product != null)
+            {
+                thumbnails[item.ProductId] = product.Thumbnail;
+            }
+        }
+
         var vm = new OrderDetailsViewModel
         {
-            Order = order
+            Order = order,
+            ProductThumbnails = thumbnails
         };
 
         return View(vm);
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

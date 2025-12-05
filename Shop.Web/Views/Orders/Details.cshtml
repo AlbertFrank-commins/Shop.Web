@@ -6,50 +6,75 @@
     ViewData["Title"] = $"Orden #{Model.Order.Id}";
 }
 
-<h1>Detalle de la orden</h1>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="card-title mb-4">Detalle de la orden</h1>
 
-<p>
-    <strong>Id:</strong> @Model.Order.Id <br />
-    <strong>Fecha:</strong> @Model.Order.CreatedAt.ToLocalTime() <br />
-    <strong>Estado:</strong> @Model.Order.Status <br />
-    <strong>Total:</strong> @Model.Order.TotalAmount.ToString("C")
-</p>
+        <p class="mb-1">
+            <strong>Id:</strong> @Model.Order.Id
+        </p>
+        <p class="mb-1">
+            <strong>Fecha:</strong> @Model.Order.CreatedAt.ToLocalTime()
+        </p>
+        <p class="mb-1">
+            <strong>Estado:</strong> @Model.Order.Status
+        </p>
+        <p class="mb-3">
+            <strong>Total:</strong> @Model.Order.TotalAmount.ToString("C")
+        </p>
 
-@if (Model.Order.Status == OrderStatus.Pending)
-{
-    <form asp-controller="Payments" asp-action="Pay" method="post" class="mb-3">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="orderId" value="@Model.Order.Id" />
-        <button type="submit" class="btn btn-success">
-            Pagar esta orden
-        </button>
-    </form>
-}
-else if (Model.Order.Status == OrderStatus.Paid)
-{
-    <p><span class="badge bg-success">Orden pagada</span></p>
-}
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Precio unitario</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Order.Items)
+        @if (Model.Order.Status == OrderStatus.Pending)
         {
-            <tr>
-                <td>@item.ProductTitle</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-                <td>@item.Quantity</td>
-                <td>@(item.UnitPrice* item.Quantity).ToString("C")</td>
-            </tr>
+            <form asp-controller="Payments" asp-action="Pay" method="post" class="mb-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.Order.Id" />
+                <button type="submit" class="btn btn-success">
+                    Pagar esta orden
+                </button>
+            </form>
         }
-    </tbody>
-</table>
+        else if (Model.Order.Status == OrderStatus.Paid)
+        {
+            <p><span class="badge bg-success">Orden pagada</span></p>
+        }
 
-<a asp-action="Index" class="btn btn-secondary">Volver a mis órdenes</a>
+        <hr />
+
+        <h4 class="mt-3 mb-3">Productos</h4>
+
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th style="width: 80px;"></th>
+                    <th>Producto</th>
+                    <th>Precio unitario</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.Items)
+                {
+                    // buscamos thumbnail por ProductId
+                    Model.ProductThumbnails.TryGetValue(item.ProductId, out var thumbUrl);
+
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(thumbUrl))
+                            {
+                                <img src="@thumbUrl" alt="@item.ProductTitle" style="width:60px; height:60px; object-fit:cover;" />
+                            }
+                        </td>
+                        <td>@item.ProductTitle</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        <td>@((item.UnitPrice * item.Quantity).ToString("C"))</td>
+                        <!-- 🔹 aquí ya no sale 259.98.ToString("C") en texto -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <a asp-action="Index" class="btn btn-secondary">Volver a mis órdenes</a>
+    </div>
+</div>
