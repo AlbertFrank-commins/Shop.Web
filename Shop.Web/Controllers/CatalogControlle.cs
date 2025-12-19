@@ -36,11 +36,11 @@ public class CatalogController : Controller
             Search = search
         };
 
-        // 🔴 IMPORTANTE: devolver el ViewModel, NO productsResult
+        
         return View(vm);
     }
 
-    // GET: /Catalog/Details/5
+    
     public async Task<IActionResult> Details(int id)
     {
         var product = await _catalogClient.GetProductByIdAsync(id);

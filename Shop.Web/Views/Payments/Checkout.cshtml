@@ -1,0 +1,63 @@
+﻿@model Shop.Web.ViewModels.Payments.PaymentViewModel
+@{
+    ViewData["Title"] = "Pago";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-7 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="mb-2" style="font-weight:700;">Pagar</h3>
+                <p class="text-muted mb-4">Completa los datos de tu tarjeta (demo).</p>
+
+                <form asp-action="Checkout" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label">Monto</label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del titular</label>
+                        <input asp-for="CardHolder" class="form-control" placeholder="Juan Pérez" />
+                        <span asp-validation-for="CardHolder" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Número de tarjeta</label>
+                        <input asp-for="CardNumber" class="form-control" placeholder="4111 1111 1111 1111" />
+                        <span asp-validation-for="CardNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Expiración</label>
+                            <input asp-for="Expiration" class="form-control" placeholder="12/30" />
+                            <span asp-validation-for="Expiration" class="text-danger"></span>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">CVV</label>
+                            <input asp-for="Cvv" class="form-control" placeholder="123" />
+                            <span asp-validation-for="Cvv" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success w-100" type="submit" style="font-weight:600;">
+                        Pagar ahora
+                    </button>
+                </form>
+
+                <hr class="my-4" />
+                <small class="text-muted">
+                    * Pago simulado para proyecto académico (no se procesa una tarjeta real).
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

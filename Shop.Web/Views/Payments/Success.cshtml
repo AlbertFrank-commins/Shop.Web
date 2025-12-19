@@ -1,0 +1,40 @@
+﻿@model Shop.Web.ViewModels.Payments.PaymentSuccessViewModel
+@{
+    ViewData["Title"] = "Pago realizado";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4 text-center">
+                <div style="font-size:48px;">✅</div>
+                <h2 class="mt-2" style="font-weight:800;">Pago realizado</h2>
+                <p class="text-muted mb-4">Tu transacción fue registrada correctamente.</p>
+
+                <div class="text-start">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">ID</span>
+                        <strong>@Model.PaymentId</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="text-muted">Monto</span>
+                        <strong>@Model.Amount.ToString("C")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="text-muted">Tarjeta</span>
+                        <strong>**** **** **** @Model.Last4</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="text-muted">Titular</span>
+                        <strong>@Model.CardHolder</strong>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2 justify-content-center">
+                    <a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">Seguir comprando</a>
+                    <a class="btn btn-outline-dark" asp-controller="Orders" asp-action="Index">Ver órdenes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
