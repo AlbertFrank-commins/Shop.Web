@@ -13,16 +13,15 @@ using Shop.Web.Services.Payments;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// MVC
 builder.Services.AddControllersWithViews();
 
-
+// DB
 builder.Services.AddDbContext<ShopDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-
+// Auth (Cookies)
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -33,40 +32,36 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-
+// DI Identity
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-
+// Catalog (DummyJSON)
 builder.Services.AddHttpClient<ICatalogClient, DummyJsonCatalogClient>(client =>
 {
     client.BaseAddress = new Uri("https://dummyjson.com");
 });
 
-// InMemory
+// InMemory clients (Cart/Orders/Payments)
 builder.Services.AddSingleton<ICartClient, InMemoryCartClient>();
 builder.Services.AddSingleton<IOrdersClient, InMemoryOrdersClient>();
 builder.Services.AddSingleton<IPaymentsClient, InMemoryPaymentsClient>();
+
+// Payments (DB)
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
-
-
 var app = builder.Build();
 
-
+// Crear DB + Seed
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ShopDbContext>();
-
-    
     db.Database.EnsureCreated();
-
-    
     DbSeeder.Seed(db);
 }
 
-
+// Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -78,7 +73,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+// ✅ OBLIGATORIO si usas [Authorize]
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -86,3 +83,4 @@ app.MapControllerRoute(
 );
 
 app.Run();
+
