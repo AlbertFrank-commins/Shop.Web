@@ -8,15 +8,13 @@ using Shop.Web.Clients;
 using Shop.Web.Data;
 using Shop.Web.Repositories.Identity;
 using Shop.Web.Services.Identity;
-using Shop.Web.Repositories.Payments;
-using Shop.Web.Services.Payments;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC
 builder.Services.AddControllersWithViews();
 
-// DB
+// ✅ DB SOLO para Identity (Users)
 builder.Services.AddDbContext<ShopDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -47,13 +45,13 @@ builder.Services.AddSingleton<ICartClient, InMemoryCartClient>();
 builder.Services.AddSingleton<IOrdersClient, InMemoryOrdersClient>();
 builder.Services.AddSingleton<IPaymentsClient, InMemoryPaymentsClient>();
 
-// Payments (DB)
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
+// ❌ QUITADO: Payments con DB (porque tú no tienes BD para pagos)
+// builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+// builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 
-// Crear DB + Seed
+// ✅ Crear DB + Seed SOLO para Users (Identity)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ShopDbContext>();
@@ -83,4 +81,3 @@ app.MapControllerRoute(
 );
 
 app.Run();
-

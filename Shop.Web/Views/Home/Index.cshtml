@@ -2,121 +2,21 @@
     ViewData["Title"] = "Inicio";
 }
 
-<style>
-    .hero {
-        background: linear-gradient(135deg, #0b1320 0%, #131921 45%, #232f3e 100%);
-        color: white;
-        border-radius: 14px;
-        padding: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,.12);
-        overflow: hidden;
-        position: relative;
-    }
-
-        .hero::after {
-            content: "";
-            position: absolute;
-            inset: -40px -60px auto auto;
-            width: 260px;
-            height: 260px;
-            background: radial-gradient(circle, rgba(254,189,105,.35), rgba(254,189,105,0) 60%);
-            transform: rotate(10deg);
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            margin: 0 0 6px 0;
-        }
-
-        .hero p {
-            margin: 0;
-            opacity: .9;
-        }
-
-    .category-card {
-        border: 1px solid rgba(0,0,0,.06);
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 10px 22px rgba(0,0,0,.06);
-        transition: transform .15s ease, box-shadow .15s ease;
-        background: white;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        height: 100%;
-    }
-
-        .category-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 30px rgba(0,0,0,.10);
-        }
-
-    .thumb {
-        height: 160px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 46px;
-        font-weight: 700;
-        color: rgba(255,255,255,.95);
-    }
-
-        /* Variantes de “imagen” con gradients */
-        .thumb.electro {
-            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
-        }
-
-        .thumb.moda {
-            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
-        }
-
-        .thumb.belleza {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-        }
-
-        .thumb.hogar {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-    .category-body {
-        padding: 14px 16px;
-    }
-
-    .category-title {
-        font-size: 1.1rem;
-        margin: 0 0 2px 0;
-    }
-
-    .category-sub {
-        margin: 0;
-        color: #6c757d;
-        font-size: .95rem;
-    }
-
-    .section-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin: 20px 0 10px;
-    }
-</style>
-
-<!-- HERO (sin imagen) -->
-<div class="hero mb-4">
+<div class="hero mb-4 a-fadeUp">
     <h1>Bienvenido a Shop.Web</h1>
     <p>Explora categorías, encuentra productos y gestiona tu carrito.</p>
 </div>
 
-<div class="section-head">
+<div class="section-head a-fadeUp" style="animation-delay:.05s">
     <h2 class="m-0">Explorar categorías</h2>
     <a class="btn btn-outline-dark btn-sm" asp-controller="Catalog" asp-action="Index">Ver catálogo</a>
 </div>
 
-<div class="row g-3 mt-1">
+<div class="row g-3 mt-1 a-fadeUp" style="animation-delay:.10s">
 
     <div class="col-12 col-md-6 col-lg-3">
-        <a asp-controller="Catalog" asp-action="Index" asp-route-search="electronics" class="category-card">
+        <a asp-controller="Catalog" asp-action="Index" asp-route-search="electronics"
+           class="category-card hover-lift">
             <div class="thumb electro">⚡</div>
             <div class="category-body">
                 <h5 class="category-title">Electrónica</h5>
@@ -126,7 +26,8 @@
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-        <a asp-controller="Catalog" asp-action="Index" asp-route-search="fashion" class="category-card">
+        <a asp-controller="Catalog" asp-action="Index" asp-route-search="fashion"
+           class="category-card hover-lift">
             <div class="thumb moda">👕</div>
             <div class="category-body">
                 <h5 class="category-title">Moda</h5>
@@ -136,7 +37,8 @@
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-        <a asp-controller="Catalog" asp-action="Index" asp-route-search="beauty" class="category-card">
+        <a asp-controller="Catalog" asp-action="Index" asp-route-search="beauty"
+           class="category-card hover-lift">
             <div class="thumb belleza">✨</div>
             <div class="category-body">
                 <h5 class="category-title">Belleza</h5>
@@ -146,7 +48,8 @@
     </div>
 
     <div class="col-12 col-md-6 col-lg-3">
-        <a asp-controller="Catalog" asp-action="Index" asp-route-search="home" class="category-card">
+        <a asp-controller="Catalog" asp-action="Index" asp-route-search="home"
+           class="category-card hover-lift">
             <div class="thumb hogar">🏠</div>
             <div class="category-body">
                 <h5 class="category-title">Hogar</h5>
@@ -156,4 +59,3 @@
     </div>
 
 </div>
-

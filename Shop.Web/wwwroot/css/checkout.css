@@ -1,0 +1,174 @@
+﻿/* =========================
+   Checkout
+========================= */
+.co-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .co-wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+.co-panel {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+
+.co-inner {
+    padding: 16px;
+}
+
+.co-title {
+    font-weight: 900;
+    margin: 0 0 10px 0;
+}
+
+.co-muted {
+    color: var(--muted);
+}
+
+/* Summary panel */
+.co-summary {
+    position: sticky;
+    top: 92px;
+}
+
+    .co-summary .co-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+.sum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(15,23,42,.10);
+}
+
+    .sum-row:last-child {
+        border-bottom: 0;
+    }
+
+.sum-label {
+    color: var(--muted);
+}
+
+.sum-value {
+    font-weight: 900;
+}
+
+.sum-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,23,42,.10);
+    background: rgba(15,23,42,.04);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+/* Card preview */
+.card-preview {
+    border-radius: 18px;
+    padding: 14px;
+    color: #fff;
+    background: radial-gradient(900px 500px at 10% 10%, rgba(31,111,255,.35), transparent 60%), radial-gradient(700px 400px at 90% 20%, rgba(254,189,105,.35), transparent 60%), linear-gradient(135deg, #0b1320, #131921 55%, #232f3e);
+    box-shadow: 0 16px 42px rgba(0,0,0,.18);
+    border: 1px solid rgba(255,255,255,.10);
+}
+
+.card-preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    opacity: .95;
+}
+
+.card-chip {
+    width: 38px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.20);
+    border: 1px solid rgba(255,255,255,.16);
+}
+
+.card-brand {
+    font-weight: 800;
+    letter-spacing: .4px;
+}
+
+.card-number {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    margin: 8px 0 12px;
+}
+
+.card-preview-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 10px;
+}
+
+.card-label {
+    font-size: 12px;
+    opacity: .78;
+    margin: 0 0 2px 0;
+}
+
+.card-value {
+    font-weight: 800;
+    margin: 0;
+}
+
+/* Form */
+.co-form .form-label {
+    font-weight: 800;
+}
+
+.co-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 576px) {
+    .co-grid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.co-error {
+    border: 1px solid rgba(220,38,38,.35);
+    background: rgba(220,38,38,.08);
+    color: #b91c1c;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.co-paybtn {
+    width: 100%;
+    padding: 12px 14px;
+    font-weight: 900;
+    border-radius: 12px;
+}
+
+/* 작은 애니메이션 */
+.co-panel, .card-preview {
+    animation: fadeUp .45s ease both;
+}

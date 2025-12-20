@@ -1,63 +1,124 @@
-﻿@model Shop.Web.ViewModels.Payments.PaymentViewModel
+﻿@model Shop.Web.ViewModels.Payments.PaymentCheckoutViewModel
 @{
-    ViewData["Title"] = "Pago";
+    ViewData["Title"] = "Checkout";
 }
-
-<div class="row justify-content-center">
-    <div class="col-12 col-md-7 col-lg-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="mb-2" style="font-weight:700;">Pagar</h3>
-                <p class="text-muted mb-4">Completa los datos de tu tarjeta (demo).</p>
-
-                <form asp-action="Checkout" method="post">
-                    @Html.AntiForgeryToken()
-
-                    <div class="mb-3">
-                        <label class="form-label">Monto</label>
-                        <input asp-for="Amount" class="form-control" />
-                        <span asp-validation-for="Amount" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Nombre del titular</label>
-                        <input asp-for="CardHolder" class="form-control" placeholder="Juan Pérez" />
-                        <span asp-validation-for="CardHolder" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Número de tarjeta</label>
-                        <input asp-for="CardNumber" class="form-control" placeholder="4111 1111 1111 1111" />
-                        <span asp-validation-for="CardNumber" class="text-danger"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-6 mb-3">
-                            <label class="form-label">Expiración</label>
-                            <input asp-for="Expiration" class="form-control" placeholder="12/30" />
-                            <span asp-validation-for="Expiration" class="text-danger"></span>
-                        </div>
-                        <div class="col-6 mb-3">
-                            <label class="form-label">CVV</label>
-                            <input asp-for="Cvv" class="form-control" placeholder="123" />
-                            <span asp-validation-for="Cvv" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-success w-100" type="submit" style="font-weight:600;">
-                        Pagar ahora
-                    </button>
-                </form>
-
-                <hr class="my-4" />
-                <small class="text-muted">
-                    * Pago simulado para proyecto académico (no se procesa una tarjeta real).
-                </small>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
 }
+
+<h1 class="mb-3 a-fadeUp">Pago</h1>
+
+@Html.ValidationSummary(excludePropertyErrors: false, "", new { @class = "text-danger mb-3 a-fadeUp" })
+
+<div class="co-wrap">
+
+    <!-- RESUMEN -->
+    <aside class="co-panel co-summary">
+        <div class="co-inner">
+            <h2 class="co-title">Resumen</h2>
+
+            <div class="sum-row">
+                <span class="sum-label">Orden</span>
+                <span class="sum-value">@Model.OrderNumber</span>
+            </div>
+
+            <div class="sum-row">
+                <span class="sum-label">Estado</span>
+                <span class="sum-pill">@Model.OrderStatus</span>
+            </div>
+
+            <div class="sum-row">
+                <span class="sum-label">Total</span>
+                <span class="sum-value">@Model.Amount.ToString("C")</span>
+            </div>
+
+            <div class="co-muted" style="font-size:13px;">
+                Pago simulado (académico). No se realiza un cobro real.
+            </div>
+        </div>
+    </aside>
+
+    <!-- FORM + TARJETA -->
+    <section class="co-panel">
+        <div class="co-inner">
+
+            <h2 class="co-title">Datos de la tarjeta</h2>
+
+            <div class="card-preview mb-3">
+                <div class="card-preview-top">
+                    <div class="card-chip"></div>
+                    <div class="card-brand">SHOP · CARD</div>
+                </div>
+
+                <div class="card-number">
+                    •••• •••• •••• ••••
+                </div>
+
+                <div class="card-preview-bottom">
+                    <div>
+                        <p class="card-label">Titular</p>
+                        <p class="card-value">@(!string.IsNullOrWhiteSpace(Model.CardHolder) ? Model.CardHolder : "NOMBRE APELLIDO")</p>
+                    </div>
+                    <div style="text-align:right">
+                        <p class="card-label">Exp</p>
+                        <p class="card-value">@(!string.IsNullOrWhiteSpace(Model.Expiration) ? Model.Expiration : "MM/AA")</p>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="co-error mb-3">
+                    @Model.Error
+                </div>
+            }
+
+            <form class="co-form" asp-controller="Payments" asp-action="Checkout" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <!-- Hidden -->
+                <input type="hidden" asp-for="OrderId" />
+                <input type="hidden" asp-for="OrderNumber" />
+                <input type="hidden" asp-for="Amount" />
+                <input type="hidden" asp-for="OrderStatus" />
+
+                <div class="mb-3">
+                    <label asp-for="CardHolder" class="form-label">Titular</label>
+                    <input asp-for="CardHolder" class="form-control" placeholder="Nombre y apellido" />
+                    <span asp-validation-for="CardHolder" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CardNumber" class="form-label">Número de tarjeta</label>
+                    <input asp-for="CardNumber" class="form-control" placeholder="XXXX XXXX XXXX XXXX" />
+                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                </div>
+
+                <div class="co-grid2">
+                    <div class="mb-3">
+                        <label asp-for="Expiration" class="form-label">Expiración</label>
+                        <input asp-for="Expiration" class="form-control" placeholder="MM/AA o MMYY" />
+                        <span asp-validation-for="Expiration" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Cvv" class="form-label">CVV</label>
+                        <input asp-for="Cvv" class="form-control" placeholder="123" />
+                        <span asp-validation-for="Cvv" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success co-paybtn">
+                    Pagar @Model.Amount.ToString("C")
+                </button>
+
+                <div class="mt-2 co-muted" style="font-size:13px;">
+                    Tip: puedes simular “rechazo” luego con reglas fake.
+                </div>
+            </form>
+
+        </div>
+    </section>
+
+</div>

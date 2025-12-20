@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shop.Web.Controllers
 {
-    [Authorize] // si no quieres obligar login, quítalo
+    [Authorize]
     public class PaymentsController : Controller
     {
         private readonly IPaymentsClient _paymentsClient;
@@ -21,115 +21,122 @@ namespace Shop.Web.Controllers
             _ordersClient = ordersClient;
         }
 
-      
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(Guid orderId)
-        {
-            var order = await _ordersClient.GetByIdAsync(orderId);
-            if (order is null) return NotFound();
-
-            var payment = await _paymentsClient.ProcessPaymentAsync(order.Id, order.TotalAmount);
-
-            if (payment.Status == PaymentStatus.Succeeded)
-            {
-                await _ordersClient.UpdateStatusAsync(order.Id, OrderStatus.Paid);
-
-                // opcional: mandar a pantalla bonita de "Pago realizado"
-                return RedirectToAction(nameof(Success), new { orderId = order.Id });
-            }
-
-            TempData["PaymentError"] = "No se pudo procesar el pago. Intenta nuevamente.";
-            return RedirectToAction("Details", "Orders", new { id = order.Id });
-        }
-
-       
+        // GET: /Payments/Checkout?orderId=...
         [HttpGet]
         public async Task<IActionResult> Checkout(Guid orderId)
         {
             var order = await _ordersClient.GetByIdAsync(orderId);
             if (order is null) return NotFound();
 
-            var vm = new PaymentViewModel
+            var vm = new PaymentCheckoutViewModel
             {
-                Amount = order.TotalAmount
+                OrderId = order.Id,
+                OrderNumber = order.Id.ToString()[..8], // porque tu OrderDto no tiene OrderNumber
+                Amount = order.TotalAmount,
+                OrderStatus = order.Status.ToString(),
             };
 
-            ViewBag.OrderId = orderId;
             return View(vm);
         }
 
+        // POST: /Payments/Checkout
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Checkout(Guid orderId, PaymentViewModel vm)
+        public async Task<IActionResult> Checkout(PaymentCheckoutViewModel vm)
         {
-            var order = await _ordersClient.GetByIdAsync(orderId);
+            var order = await _ordersClient.GetByIdAsync(vm.OrderId);
             if (order is null) return NotFound();
 
-            // forzamos el monto real de la orden (evita que editen el input)
+            // fuerza datos reales de la orden
+            vm.OrderNumber = order.Id.ToString()[..8];
             vm.Amount = order.TotalAmount;
+            vm.OrderStatus = order.Status.ToString();
 
-            if (!ModelState.IsValid)
+            // Validación simple
+            var digits = new string((vm.CardNumber ?? "").Where(char.IsDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(vm.CardHolder))
             {
-                ViewBag.OrderId = orderId;
+                vm.Error = "El titular es requerido.";
+                return View(vm);
+            }
+            if (digits.Length < 12 || digits.Length > 19)
+            {
+                vm.Error = "Número de tarjeta inválido.";
                 return View(vm);
             }
 
-            // Simulación de pago: guardamos "last4" solo para mostrar
-            var digits = new string((vm.CardNumber ?? "").Where(char.IsDigit).ToArray());
-            var last4 = digits.Length >= 4 ? digits.Substring(digits.Length - 4) : "0000";
+            // Expiración acepta MM/AA o MMYY (0230)
+            if (!IsValidExpiration(vm.Expiration))
+            {
+                vm.Error = "Expiración inválida. Usa MM/AA.";
+                return View(vm);
+            }
 
-            // Procesa el pago usando tu PaymentsClient actual (fake)
+            if (string.IsNullOrWhiteSpace(vm.Cvv) || vm.Cvv.Length < 3 || vm.Cvv.Length > 4 || !vm.Cvv.All(char.IsDigit))
+            {
+                vm.Error = "CVV inválido. Debe tener 3 o 4 dígitos.";
+                return View(vm);
+            }
+
+            var last4 = digits.Length >= 4 ? digits[^4..] : "0000";
+
+            // ✅ Aquí usamos TU InMemoryPaymentsClient
             var payment = await _paymentsClient.ProcessPaymentAsync(order.Id, order.TotalAmount);
 
             if (payment.Status == PaymentStatus.Succeeded)
             {
                 await _ordersClient.UpdateStatusAsync(order.Id, OrderStatus.Paid);
 
-                // Mandamos data para mostrar en Success
-                TempData["Paid_OrderId"] = order.Id.ToString();
-                TempData["Paid_Amount"] = order.TotalAmount.ToString();
-                TempData["Paid_Last4"] = last4;
-                TempData["Paid_Holder"] = vm.CardHolder ?? "";
-
-                return RedirectToAction(nameof(Success));
+                // Pasamos data a Success por querystring (sin TempData)
+                return RedirectToAction(nameof(Success), new
+                {
+                    paymentId = Guid.NewGuid(), // no lo tienes en PaymentDto, generamos uno fake para UI
+                    amount = order.TotalAmount,
+                    last4,
+                    holder = vm.CardHolder
+                });
             }
 
-            ModelState.AddModelError("", "No se pudo procesar el pago. Intenta nuevamente.");
-            ViewBag.OrderId = orderId;
+            vm.Error = "No se pudo procesar el pago. Intenta nuevamente.";
             return View(vm);
         }
 
-      
+        // GET: /Payments/Success?... (sin DB)
         [HttpGet]
-        public IActionResult Success(Guid? orderId = null)
+        public IActionResult Success(Guid paymentId, decimal amount, string last4, string holder)
         {
-            // Si vienes por Pay(orderId) y no usaste TempData, puedes pasar orderId
-            if (orderId.HasValue)
-            {
-                var modelFromOrder = new PaymentSuccessViewModel
-                {
-                    PaymentId = Guid.NewGuid(), // fake
-                    Amount = 0,                 // si quieres: buscar orden y poner total
-                    Last4 = "0000",
-                    CardHolder = "Cliente"
-                };
-                return View(modelFromOrder);
-            }
-
-            // Si vienes por Checkout POST, usamos TempData
             var model = new PaymentSuccessViewModel
             {
-                PaymentId = Guid.NewGuid(),
-                Amount = decimal.TryParse((string?)TempData["Paid_Amount"], out var amt) ? amt : 0,
-                Last4 = (string?)TempData["Paid_Last4"] ?? "0000",
-                CardHolder = (string?)TempData["Paid_Holder"] ?? "Cliente"
+                PaymentId = paymentId,
+                Amount = amount,
+                Last4 = last4 ?? "0000",
+                CardHolder = holder ?? "Cliente"
             };
 
             return View(model);
         }
+
+        private bool IsValidExpiration(string? expiration)
+        {
+            if (string.IsNullOrWhiteSpace(expiration)) return false;
+
+            expiration = expiration.Trim();
+
+            // acepta "0230" -> "02/30"
+            if (expiration.Length == 4 && expiration.All(char.IsDigit))
+                expiration = expiration.Insert(2, "/");
+
+            var parts = expiration.Split('/');
+            if (parts.Length != 2) return false;
+
+            if (!int.TryParse(parts[0], out var mm)) return false;
+            if (mm < 1 || mm > 12) return false;
+
+            if (!int.TryParse(parts[1], out var yy)) return false;
+            var year = 2000 + yy;
+
+            var expDate = new DateTime(year, mm, DateTime.DaysInMonth(year, mm), 23, 59, 59, DateTimeKind.Utc);
+            return expDate >= DateTime.UtcNow;
+        }
     }
 }
-
-    
-

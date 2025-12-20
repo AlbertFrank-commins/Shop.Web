@@ -3,78 +3,99 @@
 @model OrderDetailsViewModel
 
 @{
-    ViewData["Title"] = $"Orden #{Model.Order.Id}";
+    ViewData["Title"] = "Detalle de la orden";
 }
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h1 class="card-title mb-4">Detalle de la orden</h1>
+@section Scripts {
+    <link rel="stylesheet" href="~/css/order-details.css" asp-append-version="true" />
+}
 
-        <p class="mb-1">
-            <strong>Id:</strong> @Model.Order.Id
-        </p>
-        <p class="mb-1">
-            <strong>Fecha:</strong> @Model.Order.CreatedAt.ToLocalTime()
-        </p>
-        <p class="mb-1">
-            <strong>Estado:</strong> @Model.Order.Status
-        </p>
-        <p class="mb-3">
-            <strong>Total:</strong> @Model.Order.TotalAmount.ToString("C")
-        </p>
+<div class="od-wrap a-fadeUp">
+    <div class="od-inner">
 
-        @if (Model.Order.Status == OrderStatus.Pending)
-        {
-            <form asp-controller="Payments" asp-action="Pay" method="post" class="mb-3">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="orderId" value="@Model.Order.Id" />
-                <button type="submit" class="btn btn-success">
-                    Pagar esta orden
-                </button>
-            </form>
-        }
-        else if (Model.Order.Status == OrderStatus.Paid)
-        {
-            <p><span class="badge bg-success">Orden pagada</span></p>
-        }
+        <div class="od-head">
+            <div>
+                <h1 class="od-title">Detalle de la orden</h1>
 
-        <hr />
+                <div class="od-meta">
+                    <span><b>Id:</b> @Model.Order.Id.ToString()</span>
+                    <span><b>Fecha:</b> @Model.Order.CreatedAt.ToLocalTime()</span>
+                </div>
+            </div>
 
-        <h4 class="mt-3 mb-3">Productos</h4>
+            <div style="text-align:right">
+                <p class="od-total">@Model.Order.TotalAmount.ToString("C")</p>
 
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th style="width: 80px;"></th>
-                    <th>Producto</th>
-                    <th>Precio unitario</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Order.Items)
+                @if (Model.Order.Status == OrderStatus.Pending)
                 {
-                    // buscamos thumbnail por ProductId
-                    Model.ProductThumbnails.TryGetValue(item.ProductId, out var thumbUrl);
-
-                    <tr>
-                        <td>
-                            @if (!string.IsNullOrEmpty(thumbUrl))
-                            {
-                                <img src="@thumbUrl" alt="@item.ProductTitle" style="width:60px; height:60px; object-fit:cover;" />
-                            }
-                        </td>
-                        <td>@item.ProductTitle</td>
-                        <td>@item.UnitPrice.ToString("C")</td>
-                        <td>@item.Quantity</td>
-                        <td>@((item.UnitPrice * item.Quantity).ToString("C"))</td>
-                        <!-- 🔹 aquí ya no sale 259.98.ToString("C") en texto -->
-                    </tr>
+                    <span class="od-status pending">⏳ Pending</span>
                 }
-            </tbody>
-        </table>
+                else if (Model.Order.Status == OrderStatus.Paid)
+                {
+                    <span class="od-status paid">✅ Paid</span>
+                }
+                else
+                {
+                    <span class="od-status">@Model.Order.Status</span>
+                }
+            </div>
+        </div>
 
-        <a asp-action="Index" class="btn btn-secondary">Volver a mis órdenes</a>
+        <div class="od-actions">
+            @if (Model.Order.Status == OrderStatus.Pending)
+            {
+                <a class="btn btn-success"
+                   asp-controller="Payments"
+                   asp-action="Checkout"
+                   asp-route-orderId="@Model.Order.Id">
+                    Pagar esta orden
+                </a>
+            }
+            else if (Model.Order.Status == OrderStatus.Paid)
+            {
+                <span class="badge bg-success">Orden pagada</span>
+            }
+
+            <a asp-action="Index" class="btn btn-outline-dark">
+                Volver a mis órdenes
+            </a>
+        </div>
+
+        <div class="od-divider"></div>
+
+        <h4 class="mb-2">Productos</h4>
+
+        <div class="od-items">
+            @foreach (var item in Model.Order.Items)
+            {
+                Model.ProductThumbnails.TryGetValue(item.ProductId, out var thumbUrl);
+                var img = !string.IsNullOrWhiteSpace(thumbUrl)
+                ? thumbUrl
+                : Url.Content("~/images/product-placeholder.jpg");
+
+                <div class="od-item hover-lift">
+                    <div class="od-item__inner">
+                        <img class="od-thumb"
+                             src="@img"
+                             alt="@item.ProductTitle"
+                             onerror="this.onerror=null; this.src='@Url.Content("~/images/product-placeholder.jpg")';" />
+
+                        <div class="od-item-meta">
+                            <p class="od-item-title">@item.ProductTitle</p>
+                            <p class="od-item-sub">
+                                <span>Unitario: <b>@item.UnitPrice.ToString("C")</b></span>
+                                <span>Cantidad: <b>@item.Quantity</b></span>
+                            </p>
+                        </div>
+
+                        <div class="od-item-right">
+                            <p class="od-item-price">@((item.UnitPrice * item.Quantity).ToString("C"))</p>
+                            <p class="od-item-qty">Subtotal</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
     </div>
 </div>

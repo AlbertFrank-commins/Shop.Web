@@ -1,0 +1,149 @@
+﻿/* =========================
+   Cart
+========================= */
+.cart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.cart-wrap {
+    display: grid;
+    grid-template-columns: 1.5fr .9fr;
+    gap: 16px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .cart-wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cart-item {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+
+.cart-item__inner {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+}
+
+.cart-thumb {
+    width: 92px;
+    height: 92px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(15,23,42,.04);
+    border: 1px solid rgba(0,0,0,.06);
+    flex: 0 0 auto;
+}
+
+.cart-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-title {
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
+}
+
+.cart-subline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.cart-price {
+    font-weight: 900;
+    color: var(--text);
+}
+
+.cart-qty {
+    font-weight: 700;
+}
+
+.cart-right {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.cart-subtotal {
+    font-weight: 900;
+    font-size: 1.05rem;
+}
+
+.cart-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: end;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.cart-summary {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    padding: 14px;
+    position: sticky;
+    top: 92px; /* por el header sticky */
+}
+
+    .cart-summary h3 {
+        font-size: 1.1rem;
+        font-weight: 900;
+        margin: 0 0 12px 0;
+    }
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(15,23,42,.10);
+}
+
+    .summary-row:last-child {
+        border-bottom: 0;
+    }
+
+.summary-label {
+    color: var(--muted);
+}
+
+.summary-value {
+    font-weight: 900;
+}
+
+.summary-note {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.w-100 {
+    width: 100%;
+}

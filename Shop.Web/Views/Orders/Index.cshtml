@@ -1,41 +1,66 @@
 ﻿@using Shop.Web.ViewModels.Orders
+@using Shop.Contracts.Orders
 @model OrdersListViewModel
 
 @{
     ViewData["Title"] = "Mis órdenes";
 }
 
-<h1>Mis órdenes</h1>
+@section Scripts {
+    <link rel="stylesheet" href="~/css/orders.css" asp-append-version="true" />
+}
+
+<div class="orders-head a-fadeUp">
+    <h1 class="m-0">Mis órdenes</h1>
+
+    @if (Model.Orders.Any())
+    {
+        <span class="badge badge-soft">@Model.Orders.Count orden(es)</span>
+    }
+</div>
 
 @if (!Model.Orders.Any())
 {
-    <p>Todavía no tienes órdenes.</p>
+    <div class="alert alert-info a-fadeUp" style="animation-delay:.05s">
+        Todavía no tienes órdenes.
+    </div>
+
+    <a class="btn btn-primary a-fadeUp" style="animation-delay:.08s"
+       asp-controller="Catalog" asp-action="Index">
+        Ir al catálogo
+    </a>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th>Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model.Orders)
-            {
-                <tr>
-                    <td>@order.CreatedAt.ToLocalTime()</td>
-                    <td>@order.Status</td>
-                    <td>@order.TotalAmount.ToString("C")</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-primary">
-                            Ver detalles
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="orders-grid a-fadeUp" style="animation-delay:.06s">
+        @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
+        {
+            var statusClass = "status-other";
+            var statusIcon = "📦";
+
+            if (order.Status == OrderStatus.Pending) { statusClass = "status-pending"; statusIcon = "⏳"; }
+            else if (order.Status == OrderStatus.Paid) { statusClass = "status-paid"; statusIcon = "✅"; }
+
+            <div class="order-card hover-lift">
+                <div class="order-top">
+                    <div>
+                        <p class="order-id">Orden @order.Id.ToString()[..8]</p>
+                        <p class="order-date">@order.CreatedAt.ToLocalTime()</p>
+                    </div>
+
+                    <span class="status-badge @statusClass">
+                        @statusIcon @order.Status
+                    </span>
+                </div>
+
+                <p class="order-total">@order.TotalAmount.ToString("C")</p>
+
+                <div class="order-actions">
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary btn-sm">
+                        Ver detalles
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
 }

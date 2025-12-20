@@ -3,38 +3,46 @@
     ViewData["Title"] = "Pago realizado";
 }
 
-<div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-body p-4 text-center">
-                <div style="font-size:48px;">✅</div>
-                <h2 class="mt-2" style="font-weight:800;">Pago realizado</h2>
-                <p class="text-muted mb-4">Tu transacción fue registrada correctamente.</p>
+@section Scripts {
+    <link rel="stylesheet" href="~/css/payment-success.css" asp-append-version="true" />
+}
 
-                <div class="text-start">
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">ID</span>
-                        <strong>@Model.PaymentId</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <span class="text-muted">Monto</span>
-                        <strong>@Model.Amount.ToString("C")</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <span class="text-muted">Tarjeta</span>
-                        <strong>**** **** **** @Model.Last4</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <span class="text-muted">Titular</span>
-                        <strong>@Model.CardHolder</strong>
-                    </div>
+<div class="ps-wrap a-fadeUp">
+    <div class="ps-card">
+        <div class="ps-inner">
+
+            <div class="ps-check">✅</div>
+
+            <h1 class="ps-title">Pago realizado</h1>
+            <p class="ps-sub">Tu transacción fue registrada correctamente.</p>
+
+            <div class="ps-details">
+                <div class="ps-row">
+                    <span class="ps-label">ID</span>
+                    <span class="ps-value">@Model.PaymentId</span>
                 </div>
 
-                <div class="mt-4 d-flex gap-2 justify-content-center">
-                    <a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">Seguir comprando</a>
-                    <a class="btn btn-outline-dark" asp-controller="Orders" asp-action="Index">Ver órdenes</a>
+                <div class="ps-row">
+                    <span class="ps-label">Monto</span>
+                    <span class="ps-value">@Model.Amount.ToString("C")</span>
+                </div>
+
+                <div class="ps-row">
+                    <span class="ps-label">Tarjeta</span>
+                    <span class="ps-value">**** **** **** @Model.Last4</span>
+                </div>
+
+                <div class="ps-row">
+                    <span class="ps-label">Titular</span>
+                    <span class="ps-value">@Model.CardHolder</span>
                 </div>
             </div>
+
+            <div class="ps-actions">
+                <a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">Seguir comprando</a>
+                <a class="btn btn-outline-dark" asp-controller="Orders" asp-action="Index">Ver órdenes</a>
+            </div>
+
         </div>
     </div>
 </div>

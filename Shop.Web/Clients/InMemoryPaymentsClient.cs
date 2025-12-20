@@ -15,6 +15,7 @@ public class InMemoryPaymentsClient : IPaymentsClient
         // Aquí puedes simular fallos si quieres, por ahora siempre "SUCCESS"
         var payment = new PaymentDto
         {
+            Id = orderId,
             OrderId = orderId,
             Amount = amount,
             CreatedAt = DateTime.UtcNow,

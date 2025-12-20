@@ -2,7 +2,7 @@
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 using Shop.Web.Entities.Identity;
-using Shop.Web.Entities.Payments;
+
 
 namespace Shop.Web.Data
 {
@@ -10,7 +10,7 @@ namespace Shop.Web.Data
     {
         public ShopDbContext(DbContextOptions<ShopDbContext> options) : base(options) { }
         public DbSet<User> Users => Set<User>();
-        public DbSet<Payment> Payments => Set<Payment>();
+      
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

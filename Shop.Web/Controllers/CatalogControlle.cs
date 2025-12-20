@@ -36,11 +36,12 @@ public class CatalogController : Controller
             Search = search
         };
 
-        
-        return View(vm);
+
+        return View("~/Views/Catalog/Index.cshtml", vm);
+
     }
 
-    
+
     public async Task<IActionResult> Details(int id)
     {
         var product = await _catalogClient.GetProductByIdAsync(id);

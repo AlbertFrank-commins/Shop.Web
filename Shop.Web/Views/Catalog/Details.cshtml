@@ -4,89 +4,89 @@
 @{
     ViewData["Title"] = Model.Title;
 
-    var fullStars = (int)Math.Round(Model.Rating); // estrellas llenas
+    var fullStars = (int)Math.Round(Model.Rating);
     if (fullStars < 0) fullStars = 0;
     if (fullStars > 5) fullStars = 5;
     var emptyStars = 5 - fullStars;
+
+    var img = !string.IsNullOrWhiteSpace(Model.Thumbnail)
+        ? Model.Thumbnail
+        : Url.Content("~/images/product-placeholder.jpg");
 }
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <div class="row">
-            <!-- IMAGEN DEL PRODUCTO -->
-            <div class="col-md-5 mb-3">
-                @if (!string.IsNullOrEmpty(Model.Thumbnail))
-                {
-                    <img src="@Model.Thumbnail"
-                         alt="@Model.Title"
-                         class="img-fluid rounded"
-                         style="max-height:400px; object-fit:cover;" />
-                }
+<div class="pd-wrap a-fadeUp">
+    <div class="pd-inner">
+        <div class="pd-grid">
+
+            <!-- IMAGEN -->
+            <div class="pd-media hover-lift">
+                <img src="@img"
+                     alt="@Model.Title"
+                     onerror="this.onerror=null; this.src='@Url.Content("~/images/product-placeholder.jpg")';" />
             </div>
 
-            <!-- DETALLE DEL PRODUCTO -->
-            <div class="col-md-7">
-                <h2 class="mb-3">@Model.Title</h2>
+            <!-- INFO -->
+            <div>
+                <h1 class="pd-title">@Model.Title</h1>
 
-                <h3 class="text-success mb-3">
-                    @Model.Price.ToString("C")
-                </h3>
+                <div class="pd-badges">
+                    @if (!string.IsNullOrWhiteSpace(Model.Category))
+                    {
+                        <span class="pill">🏷️ @Model.Category</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Brand))
+                    {
+                        <span class="pill">🏭 @Model.Brand</span>
+                    }
+                </div>
 
-                <!-- RATING CON ESTRELLAS -->
-                <div class="d-flex align-items-center mb-3">
-                    <div class="me-2">
+                <div class="pd-price text-success">@Model.Price.ToString("C")</div>
+
+                <div class="pd-rating">
+                    <div class="stars" aria-label="Rating">
                         @for (int i = 0; i < fullStars; i++)
                         {
-                            <span class="text-warning" style="font-size:1.2rem;">★</span>
+                            <span class="star-on">★</span>
                         }
                         @for (int i = 0; i < emptyStars; i++)
                         {
-                            <span class="text-muted" style="font-size:1.2rem;">☆</span>
+                            <span class="star-off">★</span>
                         }
                     </div>
-                    <span class="text-muted">
-                        (@Model.Rating.ToString("0.0") / 5)
-                    </span>
+                    <span class="pd-muted">(@Model.Rating.ToString("0.0") / 5)</span>
                 </div>
 
-                <!-- DESCRIPCIÓN -->
                 @if (!string.IsNullOrWhiteSpace(Model.Description))
                 {
-                    <p class="mb-3">
+                    <p class="pd-desc">
                         @Model.Description
                     </p>
                 }
 
-                <!-- METADATA -->
-                <dl class="row mb-4">
-                    <dt class="col-sm-3">Categoría:</dt>
-                    <dd class="col-sm-9">@Model.Category</dd>
+                <!-- ACCIONES -->
+                <div class="pd-actions">
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@Model.Id" />
 
-                    <dt class="col-sm-3">Marca:</dt>
-                    <dd class="col-sm-9">@Model.Brand</dd>
-                </dl>
+                        <div class="input-group qty-group">
+                            <span class="input-group-text">Cantidad</span>
+                            <input type="number"
+                                   name="quantity"
+                                   value="1"
+                                   min="1"
+                                   class="form-control" />
+                            <button type="submit" class="btn btn-success">
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </form>
 
-                <!-- FORMULARIO AGREGAR AL CARRITO -->
-                <form asp-controller="Cart" asp-action="Add" method="post" class="mb-3">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <a asp-action="Index" class="btn btn-outline-dark">
+                        Volver al catálogo
+                    </a>
+                </div>
 
-                    <div class="input-group" style="max-width: 260px;">
-                        <span class="input-group-text">Cantidad</span>
-                        <input type="number"
-                               name="quantity"
-                               value="1"
-                               min="1"
-                               class="form-control" />
-                        <button type="submit" class="btn btn-success">
-                            Agregar al carrito
-                        </button>
-                    </div>
-                </form>
-
-                <a asp-action="Index" class="btn btn-secondary">
-                    Volver al catálogo
-                </a>
             </div>
         </div>
     </div>

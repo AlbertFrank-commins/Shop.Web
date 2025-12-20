@@ -9,103 +9,67 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .amazon-header {
-            background-color: #131921;
-            padding: 10px 20px;
-            color: white;
-        }
-
-            .amazon-header a {
-                color: white;
-                text-decoration: none;
-            }
-
-        .amazon-search {
-            display: flex;
-            width: 50%;
-            max-width: 700px;
-        }
-
-            .amazon-search input {
-                border-radius: 6px 0 0 6px;
-                border: none;
-                padding: 10px 12px;
-                width: 100%;
-                outline: none;
-            }
-
-            .amazon-search button {
-                background-color: #febd69;
-                border: none;
-                padding: 10px 15px;
-                border-radius: 0 6px 6px 0;
-                cursor: pointer;
-            }
-
-        .navbar-links a {
-            margin-left: 15px;
-            font-size: 14px;
-            opacity: .95;
-        }
-
-            .navbar-links a:hover {
-                opacity: 1;
-                text-decoration: underline;
-            }
-
-        footer {
-            background-color: #232f3e;
-            color: white;
-            padding: 20px;
-            margin-top: 50px;
-        }
-    </style>
 </head>
 
 <body>
-    <header class="amazon-header d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-3">
-            <a asp-controller="Home" asp-action="Index" class="h4 m-0">Shop.Web</a>
-        </div>
+    <header class="app-header">
+        <div class="app-header__inner">
+            <a asp-controller="Home" asp-action="Index" class="app-brand">Shop.Web</a>
 
-        <form asp-controller="Catalog" asp-action="Index" method="get" class="amazon-search">
-            <input type="text" name="search" placeholder="Buscar productos..." />
-            <button type="submit">🔍</button>
-        </form>
+            <form asp-controller="Catalog" asp-action="Index" method="get" class="app-search">
+                <input type="text" name="search" placeholder="Buscar productos..." />
+                <button type="submit" aria-label="Buscar">🔍</button>
+            </form>
 
-        <div class="navbar-links d-flex align-items-center">
-            <a asp-controller="Catalog" asp-action="Index">Catálogo</a>
-            <a asp-controller="Cart" asp-action="Index">Carrito 🛒</a>
-            <a asp-controller="Orders" asp-action="Index">Órdenes</a>
+            @{
+                var path = Context.Request.Path.Value?.ToLower() ?? "";
 
-            @if (User?.Identity?.IsAuthenticated == true)
-            {
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-link p-0 ms-3" style="color:white; text-decoration:none;">
-                        Salir
-                    </button>
-                </form>
+                string NavClass(string startsWith)
+                => path.StartsWith(startsWith) ? "app-navpill active" : "app-navpill";
             }
-            else
-            {
-                <a asp-controller="Account" asp-action="Login">Login</a>
-            }
+
+            <nav class="app-nav">
+                <a class="@NavClass("/catalog")" asp-controller="Catalog" asp-action="Index">
+                    <span class="icon">🧾</span>
+                    <span>Catálogo</span>
+                </a>
+
+                <a class="@NavClass("/cart")" asp-controller="Cart" asp-action="Index">
+                    <span class="icon">🛒</span>
+                    <span>Carrito</span>
+                </a>
+
+                <a class="@NavClass("/orders")" asp-controller="Orders" asp-action="Index">
+                    <span class="icon">📦</span>
+                    <span>Órdenes</span>
+                </a>
+
+                @if (User?.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="app-navpill app-navpill-btn">
+                            <span class="icon">🚪</span>
+                            <span>Salir</span>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="@NavClass("/account")" asp-controller="Account" asp-action="Login">
+                        <span class="icon">👤</span>
+                        <span>Login</span>
+                    </a>
+                }
+            </nav>
         </div>
     </header>
 
-    <main class="container mt-4">
+    <main class="container app-main">
         @RenderBody()
     </main>
 
-    <footer class="text-center">
+    <footer class="app-footer">
         © 2025 - Shop.Web
     </footer>
 
@@ -113,4 +77,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

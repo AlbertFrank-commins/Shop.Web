@@ -1,0 +1,148 @@
+﻿/* =========================
+   Order Details
+========================= */
+.od-wrap {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: 0 10px 22px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+
+.od-inner {
+    padding: 16px;
+}
+
+.od-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.od-title {
+    margin: 0;
+    font-weight: 900;
+}
+
+.od-meta {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.od-total {
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.od-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(15,23,42,.10);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+    .od-status.pending {
+        background: rgba(245, 158, 11, .12);
+        border-color: rgba(245, 158, 11, .28);
+        color: #b45309;
+    }
+
+    .od-status.paid {
+        background: rgba(22, 163, 74, .12);
+        border-color: rgba(22, 163, 74, .28);
+        color: #166534;
+    }
+
+.od-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.od-divider {
+    border-top: 1px solid rgba(15,23,42,.10);
+    margin: 14px 0;
+}
+
+.od-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.od-item {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: 0 10px 22px rgba(0,0,0,.04);
+    overflow: hidden;
+}
+
+.od-item__inner {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+}
+
+.od-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(15,23,42,.04);
+    border: 1px solid rgba(0,0,0,.06);
+    flex: 0 0 auto;
+}
+
+.od-item-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.od-item-title {
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+}
+
+.od-item-sub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.od-item-right {
+    text-align: right;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.od-item-price {
+    font-weight: 900;
+    margin: 0;
+}
+
+.od-item-qty {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0;
+}

@@ -41,7 +41,8 @@ public class CartController : Controller
             ProductThumbnails = thumbnails
         };
 
-        return View(vm);
+        return View("~/Views/Cart/Index.cshtml", vm);
+
     }
 
     [HttpPost]
